@@ -1,5 +1,22 @@
 rootProject.name = "WoWSFT"
+//rootProject.version = "0.10.10.0-1"
+//rootProject.group = "WoWSFT"
 
-include("WoWSFT-Shared")
-include("WoWSFT-Data")
-include("WoWSFT-App")
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+include(":WoWSFT-Shared")
+include(":WoWSFT-Data")
+include(":WoWSFT-App")

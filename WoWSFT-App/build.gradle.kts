@@ -20,14 +20,12 @@ dependencies {
 
 val Project.profile get() = findProperty("profile") ?: "dev"
 
-sourceSets {
-    main {
-        withConvention(KotlinSourceSet::class) {
-            kotlin.srcDir("src/main/kotlin")
-        }
-        resources.srcDirs(listOf("src/main/resources", "src/main/resources-$profile"))
-    }
-}
+//sourceSets {
+//    val main by getting {
+//        kotlin.srcDir("src/main/kotlin")
+//        resources.srcDirs(listOf("src/main/resources", "src/main/resources-$profile"))
+//    }
+//}
 
 tasks.getByName<BootWar>("bootWar") {
     mainClassName = "WoWSFT.Application"
