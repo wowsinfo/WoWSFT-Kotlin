@@ -20,5 +20,3 @@ include("wowsft-core")
 include("WoWSFT-Shared")
 include("WoWSFT-Data")
 include("WoWSFT-App")
-
-project(":wowsft-core").projectDir = file("wowwft-core")
