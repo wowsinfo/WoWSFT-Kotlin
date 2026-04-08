@@ -125,16 +125,16 @@ class JsonParser(
                     if (!"Events".equals(commander.typeinfo.nation, ignoreCase = true)) {
                         if (!commander.crewPersonality.unique && commander.typeinfo.nation == "Common") {
                             commander.identifier = "IDS_CREW_LASTNAME_DEFAULT"
-                            commanders[commander.index.toUpperCase()] = commander
+                            commanders[commander.index.uppercase()] = commander
                         } else if (commander.crewPersonality.unique) {
-                            commander.identifier = "$IDS_${commander.crewPersonality.personName.toUpperCase()}"
-                            commanders[commander.index.toUpperCase()] = commander
+                            commander.identifier = "$IDS_${commander.crewPersonality.personName.uppercase()}"
+                            commanders[commander.index.uppercase()] = commander
                         }
                     }
                 } else if (typeInfo.type.equals("Exterior", ignoreCase = true) && typeInfo.species.equals("Flags", ignoreCase = true)) {
                     val flag = mapper.convertValue(value, Flag::class.java)
                     if (flag.group == 0) {
-                        flag.identifier = "$IDS_${flag.name.toUpperCase()}"
+                        flag.identifier = "$IDS_${flag.name.uppercase()}"
                         flag.bonus = CommonUtils.getBonus(mapper.convertValue(flag.modifiers, jacksonTypeRef<java.util.LinkedHashMap<String, Any>>()))
                         flags[flag.name] = flag
                     }
@@ -168,9 +168,9 @@ class JsonParser(
         ships[ship.index] = ship
         idToName[ship.name] = ship.index
         try {
-            nameToId[global[EN]!!["$IDS_${ship.index.toUpperCase()}_FULL"].toString()] = ship.index.toUpperCase()
+            nameToId[global[EN]!!["$IDS_${ship.index.uppercase()}_FULL"].toString()] = ship.index.uppercase()
         } catch (npe: NullPointerException) {
-            log.info(ship.index.toUpperCase())
+            log.info(ship.index.uppercase())
         }
     }
 
@@ -183,7 +183,7 @@ class JsonParser(
                 }
 
                 upgrade.components.forEach { (cKey, cValue) ->
-                    when (cKey.decapitalize()) {
+                    when (cKey.replaceFirstChar { it.lowercase() }) {
                         artillery -> cValue.forEach { cVal -> ship.components.artillery[cVal] = mapper.convertValue(ship.tempComponents[cVal], Artillery::class.java) }
                         airDefense -> cValue.forEach { cVal -> ship.components.airDefense[cVal] = mapper.convertValue(ship.tempComponents[cVal], AirDefense::class.java) }
                         atba -> cValue.forEach { cVal -> ship.components.atba[cVal] = mapper.convertValue(ship.tempComponents[cVal], ATBA::class.java) }
@@ -313,15 +313,15 @@ class JsonParser(
         }
 
         ships.forEach { (_, ship) ->
-            val fullName = global[EN]?.get("$IDS_${ship.index.toUpperCase()}_FULL").toString()
+            val fullName = global[EN]?.get("$IDS_${ship.index.uppercase()}_FULL").toString()
 
             if (fullName.isNotBlank() && !fullName.contains("ARP") && !ship.typeinfo.nation.isNullOrBlank() && !ship.typeinfo.species.isNullOrBlank()) {
                 shipsList.putIfAbsent(ship.typeinfo.nation!!, LinkedHashMap())
-                shipsList[ship.typeinfo.nation!!]?.putIfAbsent(ship.realShipTypeId.toUpperCase(), LinkedHashMap())
-                shipsList[ship.typeinfo.nation!!]!![ship.realShipTypeId.toUpperCase()]!!.putIfAbsent(ship.typeinfo.species!!.toUpperCase(), LinkedHashMap())
-                shipsList[ship.typeinfo.nation!!]!![ship.realShipTypeId.toUpperCase()]!![ship.typeinfo.species!!.toUpperCase()]!!.putIfAbsent(ship.level, mutableListOf())
+                shipsList[ship.typeinfo.nation!!]?.putIfAbsent(ship.realShipTypeId.uppercase(), LinkedHashMap())
+                shipsList[ship.typeinfo.nation!!]!![ship.realShipTypeId.uppercase()]!!.putIfAbsent(ship.typeinfo.species!!.uppercase(), LinkedHashMap())
+                shipsList[ship.typeinfo.nation!!]!![ship.realShipTypeId.uppercase()]!![ship.typeinfo.species!!.uppercase()]!!.putIfAbsent(ship.level, mutableListOf())
 
-                shipsList[ship.typeinfo.nation!!]!![ship.realShipTypeId.toUpperCase()]!![ship.typeinfo.species!!.toUpperCase()]!![ship.level]
+                shipsList[ship.typeinfo.nation!!]!![ship.realShipTypeId.uppercase()]!![ship.typeinfo.species!!.uppercase()]!![ship.level]
                     ?.add(ShipIndex(ship, ship.shipUpgradeInfo.components[artillery]?.map { it.name } ?: listOf()))
             }
         }
@@ -484,7 +484,7 @@ class JsonParser(
                                         ship.components.artillery[tempId]!!.turrets[0].vertSector[1],
                                         ship.components.artillery[tempId]!!.minDistV,
                                         ship.components.artillery[tempId]!!.maxDist,
-                                        AP.equals(shell.ammoType.toLowerCase(), ignoreCase = true)
+                                        AP.equals(shell.ammoType.lowercase(), ignoreCase = true)
                                     )
                                     shellsPen.add(shell)
                                 }

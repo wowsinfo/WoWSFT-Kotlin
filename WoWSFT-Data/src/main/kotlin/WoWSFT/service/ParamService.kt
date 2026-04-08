@@ -13,11 +13,11 @@ class ParamService
     {
         tempCopy.forEach { (param, cVal) ->
             if (cVal is Double && cVal != 0.0) {
-                bonus["$MODIFIER${param.toUpperCase()}${if (specialFlags) "_MODERNIZATION" else ""}"] =
-                    if (excludeModernization.any { param.toLowerCase().contains(it) }) getNumSym(cVal)
+                bonus["$MODIFIER${param.uppercase()}${if (specialFlags) "_MODERNIZATION" else ""}"] =
+                    if (excludeModernization.any { param.lowercase().contains(it) }) getNumSym(cVal)
                     else "${getNumSym(getBonusCoef(cVal))} %"
             } else if (cVal is Int && cVal != 0 && param.contains("consumable", ignoreCase = true)) {
-                bonus["$MODIFIER${param.toUpperCase()}${if (specialFlags) "_MODERNIZATION" else ""}"] =
+                bonus["$MODIFIER${param.uppercase()}${if (specialFlags) "_MODERNIZATION" else ""}"] =
                     getNumSym(cVal)
             }
         }

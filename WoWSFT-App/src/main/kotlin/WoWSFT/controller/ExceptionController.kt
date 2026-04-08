@@ -5,7 +5,7 @@ import WoWSFT.model.Constant.GENERAL_INTERNAL_ERROR
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 open class ExceptionController
 {

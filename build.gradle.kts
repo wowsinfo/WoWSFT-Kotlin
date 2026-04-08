@@ -1,38 +1,21 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.api.tasks.wrapper.Wrapper
 
 plugins {
-    kotlin("jvm") version "1.3.72"
-    kotlin("plugin.spring") version "1.3.72" apply false
-    id("org.springframework.boot") version "2.3.1.RELEASE" apply false
-    id("io.spring.dependency-management") version "1.0.9.RELEASE" apply false
+    kotlin("multiplatform") version "2.3.20" apply false
+    kotlin("jvm") version "2.3.20" apply false
+    kotlin("plugin.spring") version "2.3.20" apply false
+    id("org.springframework.boot") version "4.0.5" apply false
 }
+
+group = "WoWSFT"
+version = "0.10.10.0-1"
 
 allprojects {
-    group = "WoWSFT"
-    version = "0.10.10.0-1"
-
-    repositories {
-        jcenter()
-    }
+    group = rootProject.group
+    version = rootProject.version
 }
 
-subprojects {
-    apply(plugin = "kotlin")
-    apply(plugin = "kotlin-spring")
-    apply(plugin = "org.springframework.boot")
-    apply(plugin = "io.spring.dependency-management")
-
-    dependencies {
-        implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
-        implementation(kotlin("reflect"))
-        implementation(kotlin("stdlib-jdk8"))
-    }
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "1.8"
-        }
-    }
+tasks.wrapper {
+    gradleVersion = "9.3.0"
+    distributionType = Wrapper.DistributionType.BIN
 }

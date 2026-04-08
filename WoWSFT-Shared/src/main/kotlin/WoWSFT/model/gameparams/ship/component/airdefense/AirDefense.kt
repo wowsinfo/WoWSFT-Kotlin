@@ -46,7 +46,7 @@ class AirDefense
     fun setAura(name: String, value: Any?) {
         if (value is HashMap<*, *>) {
             val tempObject = mapper.convertValue(value, object : TypeReference<HashMap<String, Any>>() {})
-            when (tempObject["type"].toString().toLowerCase()) {
+            when (tempObject["type"].toString().lowercase()) {
                 "far" -> { aaJoint.auraFar.add(mapper.convertValue(value, Aura::class.java)) }
                 "medium" -> { aaJoint.auraMedium.add(mapper.convertValue(value, Aura::class.java)) }
                 "near" -> { aaJoint.auraNear.add(mapper.convertValue(value, Aura::class.java)) }

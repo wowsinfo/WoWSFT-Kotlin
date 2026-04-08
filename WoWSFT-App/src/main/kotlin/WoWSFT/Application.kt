@@ -15,9 +15,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.core.io.ClassPathResource
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
+import jakarta.annotation.PostConstruct
 import java.io.File
 import java.util.*
-import javax.annotation.PostConstruct
 
 @EnableAsync
 @SpringBootApplication

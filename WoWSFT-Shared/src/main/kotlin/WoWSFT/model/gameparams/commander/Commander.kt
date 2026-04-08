@@ -2,6 +2,7 @@ package WoWSFT.model.gameparams.commander
 
 import WoWSFT.config.WoWSFT
 import WoWSFT.model.gameparams.TypeInfo
+import WoWSFT.utils.camelCaseToSnakeCaseLower
 import com.fasterxml.jackson.annotation.*
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -31,7 +32,7 @@ class Commander
             val temp = mapper.convertValue(value, object : TypeReference<LinkedHashMap<String, Skill>>() {})
             temp.forEach { (k: String, v: Skill) ->
                 v.name = k
-                v.nameSplit = "(?<=[a-zA-Z])[A-Z]".toRegex().replace(k) { "_${it.value}" }.toLowerCase()
+                v.nameSplit = camelCaseToSnakeCaseLower(k)
                 crewSkills[k] = v
             }
         }

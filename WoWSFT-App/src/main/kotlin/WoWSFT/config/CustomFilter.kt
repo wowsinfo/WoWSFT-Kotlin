@@ -10,11 +10,16 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
+import jakarta.servlet.Filter
+import jakarta.servlet.FilterChain
+import jakarta.servlet.FilterConfig
+import jakarta.servlet.ServletException
+import jakarta.servlet.ServletRequest
+import jakarta.servlet.ServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import java.io.IOException
 import java.util.*
-import javax.servlet.*
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
@@ -64,9 +69,9 @@ class CustomFilter(
             response.setHeader("X-XSS-Protection", "1; mode=block")
         }
 
-        if (!(HttpMethod.GET.name.equals(request.method, ignoreCase = true)
-            || HttpMethod.POST.name.equals(request.method, ignoreCase = true)
-            || HttpMethod.HEAD.name.equals(request.method, ignoreCase = true))) {
+        if (!(HttpMethod.GET.name().equals(request.method, ignoreCase = true)
+            || HttpMethod.POST.name().equals(request.method, ignoreCase = true)
+            || HttpMethod.HEAD.name().equals(request.method, ignoreCase = true))) {
             response.status = HttpServletResponse.SC_NOT_FOUND
             return
         }
@@ -129,7 +134,7 @@ class CustomFilter(
     private fun isNotIgnore(address: String): Boolean {
         return ignoreUri.stream()
             .noneMatch { ig: String? ->
-                address.toLowerCase().contains(ig!!)
+                address.lowercase().contains(ig!!)
             }
     }
 

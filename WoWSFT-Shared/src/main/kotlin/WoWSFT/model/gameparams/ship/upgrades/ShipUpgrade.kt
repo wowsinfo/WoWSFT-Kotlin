@@ -24,7 +24,7 @@ class ShipUpgrade
     var ucType = ""
         set(value) {
             field = value
-            ucTypeShort = if (field.isNotEmpty()) field.replace("_", "").decapitalize() else field
+            ucTypeShort = if (field.isNotEmpty()) field.replace("_", "").replaceFirstChar { it.lowercase() } else field
         }
     var ucTypeShort = ""
     var position = 0

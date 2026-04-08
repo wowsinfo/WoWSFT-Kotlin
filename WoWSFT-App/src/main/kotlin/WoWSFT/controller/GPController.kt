@@ -18,10 +18,10 @@ import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import java.util.*
-import javax.servlet.http.Cookie
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @Controller
 class GPController(
@@ -86,14 +86,14 @@ class GPController(
         }
 
         if (index.isNotEmpty()) {
-            model.addAttribute("index", index.toUpperCase())
+            model.addAttribute("index", index.uppercase())
             model.addAttribute("dataIndex", pos)
             model.addAttribute("commanders", commanders)
             model.addAttribute("flags", flagsLHM)
             model.addAttribute("skillGroup", skillGroup)
 
             val sSkills = if (skills > maxBitsToInt) 0 else skills
-            val ship = getShip(index.toUpperCase(), modules, upgrades, consumables, sSkills, commander.toUpperCase(), flags, ar)
+            val ship = getShip(index.uppercase(), modules, upgrades, consumables, sSkills, commander.uppercase(), flags, ar)
             model.addAttribute(TYPE_WARSHIP, ship)
 
             if ("post".equals(request.method, ignoreCase = true)) {

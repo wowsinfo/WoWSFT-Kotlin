@@ -33,7 +33,7 @@ class Artillery
     @JsonProperty("BurstArtilleryModule")
     var burstArtilleryModule: BurstArtilleryModule? = null
 
-    val numBarrels: Int get() = turretTypes.entries.sumBy { it.key * (it.value[0] as Int) }
+    val numBarrels: Int get() = turretTypes.entries.sumOf { it.key * (it.value[0] as Int) }
 
     companion object {
         @JsonIgnore
