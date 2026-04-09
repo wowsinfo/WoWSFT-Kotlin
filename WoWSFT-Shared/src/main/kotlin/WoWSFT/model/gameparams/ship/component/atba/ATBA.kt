@@ -3,6 +3,7 @@ package WoWSFT.model.gameparams.ship.component.atba
 import WoWSFT.config.WoWSFT
 import WoWSFT.model.gameparams.ship.component.airdefense.AAJoint
 import WoWSFT.model.gameparams.ship.component.airdefense.Aura
+import WoWSFT.utils.CoreJsonUtils.decodeRaw
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -35,11 +36,11 @@ class ATBA
         if (value is HashMap<*, *>) {
             val tempObject = mapper.convertValue(value, object : TypeReference<HashMap<String, Any>>() {})
             if ("far".equals(tempObject["type"] as String?, ignoreCase = true)) {
-                aaJoint.auraFar.add(mapper.convertValue(value, Aura::class.java))
+                aaJoint.auraFar.add(decodeRaw<Aura>(value))
             } else if ("medium".equals(tempObject["type"] as String?, ignoreCase = true)) {
-                aaJoint.auraMedium.add(mapper.convertValue(value, Aura::class.java))
+                aaJoint.auraMedium.add(decodeRaw<Aura>(value))
             } else if ("near".equals(tempObject["type"] as String?, ignoreCase = true)) {
-                aaJoint.auraNear.add(mapper.convertValue(value, Aura::class.java))
+                aaJoint.auraNear.add(decodeRaw<Aura>(value))
             } else if (tempObject.containsKey("HitLocationATBA")) {
                 val tempS = mapper.convertValue(value, Secondary::class.java)
                 if (!secondaries.containsKey(tempS.name)) {

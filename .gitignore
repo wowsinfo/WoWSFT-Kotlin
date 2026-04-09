@@ -1,7 +1,9 @@
 .gradle
+.kotlin/
 build
 **/build/
 .idea
 *.iml
 .gradle-user
 bootrun-*
+wowsft-core/src/commonMain/kotlin/WoWSFT/model/BlockIp.kt

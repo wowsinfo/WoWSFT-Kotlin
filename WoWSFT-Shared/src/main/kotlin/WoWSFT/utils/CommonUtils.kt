@@ -2,11 +2,15 @@ package WoWSFT.utils
 
 import WoWSFT.model.Constant.*
 import WoWSFT.model.gameparams.CommonModifierShip
+import WoWSFT.model.gameparams.ship.component.artillery.Shell
+import WoWSFT.model.gameparams.ship.component.planes.Plane
+import WoWSFT.model.gameparams.ship.component.torpedo.TorpedoAmmo
+import WoWSFT.utils.CoreJsonUtils.decodeRaw
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import java.io.IOException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
+import kotlinx.serialization.decodeFromString
 
 object CommonUtils {
     private val mapper = ObjectMapper()
@@ -50,7 +54,16 @@ object CommonUtils {
     @Throws(IOException::class)
     fun zFetch(zf: ZipFile, index: String, obj: Class<*>?): Any? {
         val zipEntry: ZipEntry? = zf.getEntry("${index}${FILE_JSON}")
-        return if (zipEntry != null) mapper.readValue(zf.getInputStream(zipEntry), obj) else null
+        if (zipEntry == null) {
+            return null
+        }
+
+        return when (obj) {
+            Plane::class.java -> CoreJsonUtils.gameParamsJson.decodeFromString<Plane>(zf.getInputStream(zipEntry).bufferedReader().use { it.readText() })
+            Shell::class.java -> CoreJsonUtils.gameParamsJson.decodeFromString<Shell>(zf.getInputStream(zipEntry).bufferedReader().use { it.readText() })
+            TorpedoAmmo::class.java -> CoreJsonUtils.gameParamsJson.decodeFromString<TorpedoAmmo>(zf.getInputStream(zipEntry).bufferedReader().use { it.readText() })
+            else -> mapper.readValue(zf.getInputStream(zipEntry), obj)
+        }
     }
 
     fun getBonus(copy: LinkedHashMap<String, Any>, isConsumable: Boolean = false): LinkedHashMap<String, String> {
@@ -58,7 +71,7 @@ object CommonUtils {
 
         copy.forEach { (param, cVal) ->
             if (cVal is LinkedHashMap<*, *>) {
-                mapper.convertValue(cVal, jacksonTypeRef<CommonModifierShip>()).let { cValConvert ->
+                decodeRaw<CommonModifierShip>(cVal).let { cValConvert ->
                     if (cValConvert.aircraftCarrier != 1.0 && cValConvert.aircraftCarrier != 0.0) {
                         getBonus(linkedMapOf(Pair(param, cValConvert.aircraftCarrier))).forEach { (convertKey, convertVal) ->
                             bonus["${convertKey}_${AIRCARRIER.uppercase()}"] = convertVal
@@ -98,7 +111,8 @@ object CommonUtils {
             } else if (coeffInverse.any { param.contains(it, true) }) {
                 bonus["${MODIFIER}${param.uppercase()}"] = "${getNumSym(getBonusCoeffInverse(cVal as Double))} %"
             } else if (param.equals("affectedClasses", ignoreCase = true)) {
-                mapper.convertValue(cVal, jacksonTypeRef<List<String>?>())
+                (cVal as? List<*>)
+                    ?.map { it.toString() }
                     .takeIf { it.isNullOrEmpty().not() }
                     ?.let { list ->
                         bonus["${MODIFIER}${param.uppercase()}"] = list.joinToString { affected -> "${IDS_}${affected.uppercase()} " }.trim()

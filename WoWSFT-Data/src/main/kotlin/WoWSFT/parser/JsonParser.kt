@@ -21,6 +21,7 @@ import WoWSFT.model.gameparams.ship.upgrades.*
 import WoWSFT.service.ParamService
 import WoWSFT.utils.CommonUtils
 import WoWSFT.utils.PenetrationUtils
+import WoWSFT.utils.CoreJsonUtils.decodeRaw
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
@@ -112,16 +113,16 @@ class JsonParser(
                         addShips(ship)
                     }
                 } else if (typeInfo.type.equals("Modernization", ignoreCase = true)) {
-                    val modernization = mapper.convertValue(value, Modernization::class.java)
+                    val modernization = decodeRaw<Modernization>(value)
                     if (modernization.slot >= 0) {
                         modernization.bonus = CommonUtils.getBonus(mapper.convertValue(modernization.modifiers, jacksonTypeRef<java.util.LinkedHashMap<String, Any>>()))
                         upgrades[modernization.slot]!![modernization.name] = modernization
                     }
                 } else if (typeInfo.type.equals("Ability", ignoreCase = true) && !excludeShipNations.contains(typeInfo.nation) && !key.contains("Super")) {
-                    val consumable = mapper.convertValue(value, Consumable::class.java)
+                    val consumable = Consumable.fromRaw(value)
                     consumables[key] = consumable
                 } else if (typeInfo.type.equals("Crew", ignoreCase = true)) {
-                    val commander = mapper.convertValue(value, Commander::class.java)
+                    val commander = Commander.fromRaw(value)
                     if (!"Events".equals(commander.typeinfo.nation, ignoreCase = true)) {
                         if (!commander.crewPersonality.unique && commander.typeinfo.nation == "Common") {
                             commander.identifier = "IDS_CREW_LASTNAME_DEFAULT"
@@ -132,7 +133,7 @@ class JsonParser(
                         }
                     }
                 } else if (typeInfo.type.equals("Exterior", ignoreCase = true) && typeInfo.species.equals("Flags", ignoreCase = true)) {
-                    val flag = mapper.convertValue(value, Flag::class.java)
+                    val flag = decodeRaw<Flag>(value)
                     if (flag.group == 0) {
                         flag.identifier = "$IDS_${flag.name.uppercase()}"
                         flag.bonus = CommonUtils.getBonus(mapper.convertValue(flag.modifiers, jacksonTypeRef<java.util.LinkedHashMap<String, Any>>()))
@@ -189,11 +190,11 @@ class JsonParser(
                         atba -> cValue.forEach { cVal -> ship.components.atba[cVal] = mapper.convertValue(ship.tempComponents[cVal], ATBA::class.java) }
                         engine -> cValue.forEach { cVal -> ship.components.engine[cVal] = mapper.convertValue(ship.tempComponents[cVal], Engine::class.java) }
                         suo -> cValue.forEach { cVal -> ship.components.suo[cVal] = mapper.convertValue(ship.tempComponents[cVal], FireControl::class.java) }
-                        hull -> cValue.forEach { cVal -> ship.components.hull[cVal] = mapper.convertValue(ship.tempComponents[cVal], Hull::class.java) }
+                        hull -> cValue.forEach { cVal -> ship.components.hull[cVal] = decodeRaw<Hull>(ship.tempComponents[cVal]) }
                         torpedoes -> cValue.forEach { cVal -> ship.components.torpedoes[cVal] = mapper.convertValue(ship.tempComponents[cVal], Torpedo::class.java) }
                         airSupport -> cValue.forEach { cVal -> ship.components.airSupport[cVal] = mapper.convertValue(ship.tempComponents[cVal], jacksonTypeRef<AirSupport>()) }
                         airArmament -> cValue.forEach { cVal -> ship.components.airArmament[cVal] = mapper.convertValue(ship.tempComponents[cVal], AirArmament::class.java) }
-                        flightControl -> cValue.forEach { cVal -> ship.components.flightControl[cVal] = mapper.convertValue(ship.tempComponents[cVal], FlightControl::class.java) }
+                        flightControl -> cValue.forEach { cVal -> ship.components.flightControl[cVal] = decodeRaw<FlightControl>(ship.tempComponents[cVal]) }
                         fighter, diveBomber, torpedoBomber, skipBomber -> cValue.forEach { cVal ->
                             val tempPlaneType = mapper.convertValue(ship.tempComponents[cVal], object: TypeReference<HashMap<String, String>>() {})
                             ship.planes[cVal] = tempPlaneType["planeType"]!!

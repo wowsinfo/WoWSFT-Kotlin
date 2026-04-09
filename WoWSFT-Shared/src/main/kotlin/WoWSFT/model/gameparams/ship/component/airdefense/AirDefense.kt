@@ -1,6 +1,7 @@
 package WoWSFT.model.gameparams.ship.component.airdefense
 
 import WoWSFT.config.WoWSFT
+import WoWSFT.utils.CoreJsonUtils.decodeRaw
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -47,9 +48,9 @@ class AirDefense
         if (value is HashMap<*, *>) {
             val tempObject = mapper.convertValue(value, object : TypeReference<HashMap<String, Any>>() {})
             when (tempObject["type"].toString().lowercase()) {
-                "far" -> { aaJoint.auraFar.add(mapper.convertValue(value, Aura::class.java)) }
-                "medium" -> { aaJoint.auraMedium.add(mapper.convertValue(value, Aura::class.java)) }
-                "near" -> { aaJoint.auraNear.add(mapper.convertValue(value, Aura::class.java)) }
+                "far" -> { aaJoint.auraFar.add(decodeRaw<Aura>(value)) }
+                "medium" -> { aaJoint.auraMedium.add(decodeRaw<Aura>(value)) }
+                "near" -> { aaJoint.auraNear.add(decodeRaw<Aura>(value)) }
             }
         }
     }
